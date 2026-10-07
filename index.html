@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Second Plate — Non-Profit Food & Essentials Rescue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFFFF;--cream:#FFFBF0;--yolk:#F6B400;--yolk-deep:#D99400;--tint:#FFF3CE;
+  --ink:#1C1A14;--ink-soft:#6B6552;--line:#EDE6D2;--danger:#C24A2E;--ok:#4F7A3E;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+html,body{height:100%;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+h1,h2,h3,.brand{font-family:'Space Grotesk',sans-serif;}
+.shell{max-width:920px;margin:0 auto;padding:28px 20px 60px;}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+.logo-btn{display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:0;text-align:left;}
+.brand{font-size:22px;font-weight:700;letter-spacing:-0.01em;color:var(--ink);}
+.brand-mark{width:30px;height:30px;border-radius:50%;background:var(--yolk);display:grid;place-items:center;flex-shrink:0;}
+.brand-mark svg{width:16px;height:16px;}
+header p{margin:2px 0 0;color:var(--ink-soft);font-size:13.5px;}
+.view{display:none;}
+.view.active{display:block;animation:rise .35s ease;}
+@keyframes rise{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px;}
+.panel h2{margin:0 0 4px;font-size:17px;}
+.panel .sub{color:var(--ink-soft);font-size:13px;margin:0 0 18px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:5px;}
+.field input,.field select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:400 14px 'Inter',sans-serif;background:var(--cream);color:var(--ink);}
+.field input:focus,.field select:focus{outline:none;border-color:var(--yolk-deep);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn{border:none;background:var(--yolk);color:var(--ink);font:600 14px 'Inter',sans-serif;padding:11px 20px;border-radius:8px;cursor:pointer;transition:background .15s,transform .1s;}
+.btn:hover{background:var(--yolk-deep);}
+.btn:active{transform:scale(.98);}
+.btn.ghost{background:var(--cream);border:1px solid var(--line);}
+.btn.small{padding:8px 14px;font-size:13px;}
+.list{display:flex;flex-direction:column;gap:12px;}
+.card{border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;gap:16px;align-items:flex-start;background:var(--cream);}
+.card.matched{border-color:var(--yolk-deep);background:var(--tint);}
+.card.expired{opacity:.5;}
+.card-main h3{margin:0 0 3px;font-size:15.5px;}
+.card-meta{font-size:12.5px;color:var(--ink-soft);display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+.pill{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:11.5px;}
+.pill.match{background:var(--yolk);border-color:var(--yolk-deep);color:var(--ink);font-weight:600;}
+.timer{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;}
+.timer.warn{color:var(--danger);}
+.card-side{text-align:right;flex-shrink:0;min-width:130px;}
+.status{font-size:11.5px;font-weight:600;margin-bottom:8px;display:block;}
+.status.claimed{color:var(--ok);}
+.status.open{color:var(--yolk-deep);}
+.status.gone{color:var(--danger);}
+.status.transit{color:var(--yolk-deep);}
+.empty{color:var(--ink-soft);font-size:13.5px;text-align:center;padding:28px 0;}
+.modal-backdrop{position:fixed;inset:0;background:rgba(28,26,20,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:20;}
+.modal-backdrop.show{display:flex;}
+.modal{background:var(--paper);border-radius:14px;max-width:340px;width:100%;padding:26px;text-align:center;}
+.modal h3{margin:0 0 6px;font-size:16px;}
+.modal p{color:var(--ink-soft);font-size:13px;margin:0 0 18px;}
+.otp{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;letter-spacing:.14em;background:var(--tint);border-radius:10px;padding:14px;margin-bottom:18px;color:var(--ink);}
+footer{margin-top:36px;text-align:center;color:var(--ink-soft);font-size:12px;line-height:1.6;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#17150F;--cream:#1E1B13;--ink:#F5F1E4;--ink-soft:#9C9581;--line:#332E1E;--tint:#2B2412;}}
+:root[data-theme="dark"]{--paper:#17150F;--cream:#1E1B13;--ink:#F5F1E4;--ink-soft:#9C9581;--line:#332E1E;--tint:#2B2412;}
+@media (max-width:520px){.row2{grid-template-columns:1fr;}.card{flex-direction:column;}.card-side{text-align:left;}}
+.auth-shell{max-width:380px;margin:0 auto;padding:64px 20px;}
+.auth-brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:6px;}
+.auth-shell p.lede{text-align:center;color:var(--ink-soft);font-size:13.5px;margin:0 0 30px;}
+.role-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.role-opt{border:1px solid var(--line);background:var(--cream);border-radius:10px;padding:13px 10px;text-align:center;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink-soft);transition:border-color .15s,background .15s,color .15s;}
+.role-opt.active{border-color:var(--yolk-deep);background:var(--tint);color:var(--ink);font-weight:600;}
+.auth-panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:26px;}
+.auth-switch{text-align:center;font-size:13px;color:var(--ink-soft);margin-top:16px;}
+.err{color:var(--danger);font-size:12.5px;margin:-6px 0 12px;display:none;}
+.err.show{display:block;}
+.who{display:flex;align-items:center;gap:8px;}
+.avatar{width:26px;height:26px;border-radius:50%;background:var(--tint);border:1px solid var(--yolk-deep);display:grid;place-items:center;font:600 11px 'Space Grotesk',sans-serif;color:var(--ink);flex-shrink:0;}
+.amt-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.amt{border:1px solid var(--line);background:var(--cream);border-radius:8px;padding:10px 16px;font:600 14px 'Space Grotesk',sans-serif;cursor:pointer;color:var(--ink-soft);}
+.amt.active{border-color:var(--yolk-deep);background:var(--tint);color:var(--ink);}
+.impact{background:var(--tint);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--ink-soft);margin-bottom:16px;}
+.impact strong{color:var(--ink);}
+.tag{background:var(--ink);color:var(--cream);border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;}
+.banner{background:var(--tint);border:1px solid var(--yolk-deep);border-radius:14px;padding:18px 20px;margin-bottom:18px;font-size:13.5px;line-height:1.55;}
+.banner strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:15px;margin-bottom:4px;}
+.kits{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;}
+.kit{border:1px solid var(--line);background:var(--cream);border-radius:10px;padding:14px;text-align:left;cursor:pointer;}
+.kit.active{border-color:var(--yolk-deep);background:var(--tint);}
+.kit .kn{font:600 13.5px 'Space Grotesk',sans-serif;display:block;margin-bottom:3px;}
+.kit .kp{font-size:12px;color:var(--ink-soft);}
+.feed-card{display:flex;gap:14px;}
+.feed-photo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--yolk),var(--yolk-deep));flex-shrink:0;display:grid;place-items:center;font-size:20px;}
+.feed-body h3{margin:0 0 3px;font-size:14.5px;}
+.feed-body p{margin:0 0 6px;font-size:13px;color:var(--ink-soft);line-height:1.5;}
+.feed-body a{font-size:12px;color:var(--yolk-deep);font-weight:600;text-decoration:none;}
+.dropoff-row{display:flex;gap:8px;margin-top:8px;}
+.dropoff-row input{flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:var(--paper);}
+@media (max-width:520px){.kits{grid-template-columns:1fr;}}
+
+/* Sidebar */
+.sidebar-backdrop{position:fixed;inset:0;background:rgba(28,26,20,.4);display:none;z-index:29;}
+.sidebar-backdrop.show{display:block;}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:270px;max-width:82vw;background:var(--paper);z-index:30;
+  transform:translateX(-100%);transition:transform .25s ease;padding:22px 16px;display:flex;flex-direction:column;
+  border-right:1px solid var(--line);padding-top:calc(22px + env(safe-area-inset-top,0px));}
+.sidebar.open{transform:translateX(0);}
+.sidebar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.sidebar-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink-soft);}
+.side-link{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:none;background:none;
+  padding:11px 10px;border-radius:9px;font:500 14px 'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;margin-bottom:2px;}
+.side-link.active{background:var(--tint);color:var(--ink);font-weight:600;}
+.side-link .ic{font-size:16px;width:20px;text-align:center;}
+.side-sep{border:none;border-top:1px solid var(--line);margin:10px 0;}
+.side-user{font-size:12px;color:var(--ink-soft);padding:0 10px 10px;}
+</style>
+</head>
+<body>
+
+<div class="shell auth-shell" id="auth-screen">
+  <div class="auth-brand">
+    <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h16M4 18h10" stroke="#1C1A14" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+    <span class="brand">Second Plate</span>
+  </div>
+  <p class="lede">A non-profit rescuing surplus food &amp; essentials for Mumbai.</p>
+  <div class="auth-panel">
+    <div class="role-pick">
+      <div class="role-opt active" data-role="individual">Individual</div>
+      <div class="role-opt" data-role="ngo">Organization / NGO</div>
+    </div>
+    <div class="field"><label>Name</label><input id="a-name" placeholder="e.g. Rina Kulkarni"></div>
+    <div class="field"><label>Location / area</label><input id="a-loc" placeholder="e.g. Andheri West, Mumbai"></div>
+    <div class="field"><label>Email</label><input id="a-email" type="email" placeholder="you@example.com"></div>
+    <div class="field"><label>Password</label><input id="a-pass" type="password" placeholder="••••••••"></div>
+    <p class="err" id="a-err">Enter your name, email and password to continue.</p>
+    <button class="btn" id="a-submit" style="width:100%;">Log in</button>
+    <p class="auth-switch">Prototype login — any details will work.</p>
+  </div>
+</div>
+
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <span class="brand" style="font-size:18px;">Second Plate</span>
+    <button class="sidebar-close" id="sidebar-close">✕</button>
+  </div>
+  <div class="side-user" id="side-user"></div>
+  <button class="tab side-link active" data-view="feed"><span class="ic">🏠</span> Feed</button>
+  <button class="tab side-link" data-view="donate"><span class="ic">🍲</span> Donate food</button>
+  <button class="tab side-link" data-view="claim"><span class="ic">📦</span> Receive food</button>
+  <button class="tab side-link" data-view="fund"><span class="ic">💛</span> Donate &amp; buy</button>
+  <hr class="side-sep">
+  <button class="tab side-link" data-view="profile"><span class="ic">👤</span> Profile</button>
+  <button class="tab side-link" data-view="orders"><span class="ic">🧾</span> Your orders</button>
+  <button class="tab side-link" data-view="help"><span class="ic">💬</span> Help &amp; customer care</button>
+  <hr class="side-sep">
+  <button class="side-link" id="sidebar-logout"><span class="ic">↩</span> Log out</button>
+</nav>
+
+<div class="shell" id="app-screen" style="display:none;">
+  <header>
+    <button class="logo-btn" id="logo-btn">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h16M4 18h10" stroke="#1C1A14" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+      <div>
+        <div class="brand">Second Plate</div>
+        <p>Non-profit food &amp; essentials rescue for Mumbai</p>
+      </div>
+    </button>
+    <div class="who">
+      <span class="avatar" id="who-initial">R</span>
+      <div>
+        <div id="who-name" style="font-size:12.5px;font-weight:600;line-height:1.2;"></div>
+        <div id="who-loc" style="font-size:11px;color:var(--ink-soft);line-height:1.2;"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FEED VIEW -->
+  <section class="view active" id="view-feed">
+    <div class="banner">
+      <strong>Second Plate is a registered non-profit.</strong>
+      Every rupee raised goes directly toward food, clothing and other essentials for people across Mumbai — nothing is kept as profit. All pickups and drop-offs run on our electric-bike fleet, charged on solar or government green-power tariffs wherever we can arrange it.
+    </div>
+    <div class="panel" id="feed-post-panel" style="display:none;">
+      <h2>Share a proof update</h2>
+      <p class="sub">Registered employees post photos or a video link after every delivery, for public credibility.</p>
+      <div class="row2">
+        <div class="field"><label>Caption</label><input id="f-caption" placeholder="e.g. Delivered 80 meals to Sion Shelter Home"></div>
+        <div class="field"><label>Instagram / YouTube link</label><input id="f-link" placeholder="https://instagram.com/..."></div>
+      </div>
+      <button class="btn" id="f-submit">Post update</button>
+    </div>
+    <div class="panel">
+      <h2>Latest from the ground</h2>
+      <p class="sub">Verified drop-offs and stories from our partner NGOs.</p>
+      <div class="list" id="feed-list"></div>
+    </div>
+  </section>
+
+  <!-- DONATE FOOD VIEW -->
+  <section class="view" id="view-donate">
+    <div class="panel">
+      <h2>Donate food</h2>
+      <p class="sub">Mess halls, caterers, banquet venues, or a home cook with extra food. Set a strict shelf life; listings auto-delist once time runs out.</p>
+      <div class="row2">
+        <div class="field"><label>Food item</label><input id="d-food" placeholder="e.g. Veg pulao + dal"></div>
+        <div class="field"><label>Servings</label><input id="d-servings" type="number" min="1" placeholder="e.g. 60"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Source</label><input id="d-source" placeholder="e.g. Hostel Mess B"></div>
+        <div class="field"><label>Pickup location</label><input id="d-loc" placeholder="e.g. Gate 3, Sector 12"></div>
+      </div>
+      <div class="field" style="max-width:200px;">
+        <label>Shelf life</label>
+        <select id="d-shelf">
+          <option value="4">4 hours</option>
+          <option value="5">5 hours</option>
+          <option value="6" selected>6 hours</option>
+        </select>
+      </div>
+      <button class="btn" id="d-submit">Post listing</button>
+    </div>
+    <div class="panel">
+      <h2>Your active listings</h2>
+      <p class="sub">Live status of everything you've posted.</p>
+      <div class="list" id="donor-list"></div>
+    </div>
+  </section>
+
+  <!-- RECEIVE FOOD VIEW -->
+  <section class="view" id="view-claim">
+    <div class="panel">
+      <h2>Your distribution capacity</h2>
+      <p class="sub">Listings that fit your capacity are highlighted first. Only verified NGOs and registered individuals can claim.</p>
+      <div class="field" style="max-width:220px;">
+        <label>Can distribute to</label>
+        <input id="c-capacity" type="number" min="1" placeholder="e.g. 50" value="50">
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Available listings</h2>
+      <p class="sub">Claiming generates a driver pickup code. Our electric-bike riders verify both pickup and drop-off.</p>
+      <div class="list" id="claim-list"></div>
+    </div>
+    <div class="panel">
+      <h2>Out for delivery</h2>
+      <p class="sub">Add a proof link (Instagram or YouTube) from the recipient or volunteer to confirm drop-off and close the claim.</p>
+      <div class="list" id="transit-list"></div>
+    </div>
+  </section>
+
+  <!-- DONATE & BUY VIEW -->
+  <section class="view" id="view-fund">
+    <div class="panel">
+      <h2>Donate money</h2>
+      <p class="sub">Funds cover electric-bike delivery runs and top up meals when listings run short.</p>
+      <div class="amt-row">
+        <button class="amt" data-amt="100">₹100</button>
+        <button class="amt active" data-amt="500">₹500</button>
+        <button class="amt" data-amt="1000">₹1,000</button>
+        <button class="amt" data-amt="0">Custom</button>
+      </div>
+      <div class="field" id="fund-custom-wrap" style="display:none;max-width:200px;">
+        <label>Amount (₹)</label><input id="fund-custom" type="number" min="1" placeholder="e.g. 750">
+      </div>
+      <div class="impact" id="fund-impact"><strong>₹500</strong> covers roughly 10 meals of delivery.</div>
+      <button class="btn" id="fund-submit">Donate ₹<span id="fund-btn-amt">500</span></button>
+    </div>
+    <div class="panel">
+      <h2>Or buy an essentials kit</h2>
+      <p class="sub">Buy a kit and we deliver it to someone in need — same non-profit chain, packaged for a specific purpose.</p>
+      <div class="kits">
+        <div class="kit" data-kit="Food kit" data-price="150"><span class="kn">Food kit</span><span class="kp">₹150 · 5 meals</span></div>
+        <div class="kit" data-kit="Clothes kit" data-price="400"><span class="kn">Clothes kit</span><span class="kp">₹400 · warm layers</span></div>
+        <div class="kit" data-kit="Hygiene kit" data-price="200"><span class="kn">Hygiene kit</span><span class="kp">₹200 · soap, essentials</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Recent contributions</h2>
+      <div class="list" id="fund-list"></div>
+    </div>
+  </section>
+
+  <!-- PROFILE VIEW -->
+  <section class="view" id="view-profile">
+    <div class="panel">
+      <h2>Your profile</h2>
+      <p class="sub">Prototype only — changes stay in this session.</p>
+      <div class="row2">
+        <div class="field"><label>Name</label><input id="p-name"></div>
+        <div class="field"><label>Location / area</label><input id="p-loc"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Email</label><input id="p-email"></div>
+        <div class="field"><label>Account type</label><input id="p-role" disabled></div>
+      </div>
+      <button class="btn" id="p-save">Save changes</button>
+    </div>
+  </section>
+
+  <!-- ORDERS VIEW -->
+  <section class="view" id="view-orders">
+    <div class="panel">
+      <h2>Your orders &amp; activity</h2>
+      <p class="sub">Listings, deliveries and contributions from this session.</p>
+      <div class="list" id="orders-list"></div>
+    </div>
+  </section>
+
+  <!-- HELP VIEW -->
+  <section class="view" id="view-help">
+    <div class="panel">
+      <h2>Help &amp; customer care</h2>
+      <p class="sub">We usually reply within a day.</p>
+      <div class="list">
+        <div class="card"><div class="card-main"><h3>How is my food donation used?</h3><p class="card-meta" style="margin-top:4px;">It's matched to a verified NGO or individual by capacity and picked up by an e-bike driver before it expires.</p></div></div>
+        <div class="card"><div class="card-main"><h3>Where does donated money go?</h3><p class="card-meta" style="margin-top:4px;">Directly to delivery costs and essentials kits — Second Plate is a non-profit, so no cut is kept.</p></div></div>
+        <div class="card"><div class="card-main"><h3>How are NGOs verified?</h3><p class="card-meta" style="margin-top:4px;">Through registration checks and proof-of-delivery videos shared after each drop-off.</p></div></div>
+      </div>
+      <div class="row2" style="margin-top:18px;">
+        <div class="field"><label>Email us</label><input value="support@secondplate.org" disabled></div>
+        <div class="field"><label>Helpline</label><input value="+91 22 4000 1234" disabled></div>
+      </div>
+      <button class="btn ghost" id="help-contact">Message support</button>
+    </div>
+  </section>
+
+  <footer>Second Plate is a non-profit prototype. Deliveries run on electric bikes to cut fuel costs and emissions — we're working toward free government charging or our own solar charging points.</footer>
+</div>
+
+<div class="modal-backdrop" id="fund-backdrop">
+  <div class="modal">
+    <h3>Thank you</h3>
+    <p>Your contribution goes straight to food, clothing or essentials for someone in Mumbai.</p>
+    <div class="otp" id="fund-amount-display" style="font-size:26px;">₹500</div>
+    <button class="btn" id="fund-close">Done</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="otp-backdrop">
+  <div class="modal">
+    <h3>Driver pickup code generated</h3>
+    <p>Share this with the driver. The provider confirms it on handover before the e-bike leaves.</p>
+    <div class="otp" id="otp-code">0000</div>
+    <button class="btn" id="otp-close">Confirm pickup</button>
+  </div>
+</div>
+
+<script>
+let listings = [
+  {id:1, food:"Rajma chawal", servings:80, source:"Central Mess", loc:"Gate 2, Main Campus", shelf:5, posted:Date.now()-90*60000, status:"open"},
+  {id:2, food:"Paneer sabzi + rotis", servings:35, source:"Banquet Hall — Sharma Wedding", loc:"Lawns Entrance, Sector 9", shelf:4, posted:Date.now()-20*60000, status:"open"},
+  {id:3, food:"Veg biryani", servings:120, source:"Corporate Cafeteria", loc:"Tower B, Ground Floor", shelf:6, posted:Date.now()-200*60000, status:"delivered", proof:"https://instagram.com/secondplate/proof1"},
+];
+let nextId = 4;
+let fundDonations = [];
+let feedPosts = [
+  {id:1, name:"Amit Rao", org:"Second Plate driver", caption:"Delivered 120 servings of biryani to Sion Shelter Home", link:"https://instagram.com/secondplate/proof1"},
+  {id:2, name:"Priya Nair", org:"Asha NGO", caption:"Distributed hygiene kits to 40 families near Dharavi", link:"https://youtube.com/watch?v=example"},
+  {id:3, name:"Second Plate", org:"Official", caption:"This week: 640 meals rescued, 12 e-bike runs, zero fuel cost", link:"https://instagram.com/secondplate"},
+];
+let nextFeedId = 4;
+let currentUser = {name:"", loc:"", email:"", role:"individual"};
+
+function fmtTime(ms){
+  if(ms<=0) return "Expired";
+  const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000);
+  return (h>0? h+"h ":"") + m+"m left";
+}
+function timeLeft(l){ return (l.posted + l.shelf*3600000) - Date.now(); }
+
+function render(){
+  const capacity = parseInt(document.getElementById('c-capacity').value) || 0;
+  const donorList = document.getElementById('donor-list');
+  const claimList = document.getElementById('claim-list');
+  const transitList = document.getElementById('transit-list');
+  donorList.innerHTML = ""; claimList.innerHTML = ""; transitList.innerHTML = "";
+  let anyDonor=false, anyClaim=false, anyTransit=false;
+
+  listings.forEach(l=>{
+    const left = timeLeft(l);
+    if(left<=0 && l.status==="open") l.status = "gone";
+    anyDonor = true;
+
+    const statusLabel = {open:"Awaiting match", claimed:"In transit · e-bike", delivered:"Delivered", gone:"Delisted"}[l.status];
+    const statusClass = {open:"open", claimed:"transit", delivered:"claimed", gone:"gone"}[l.status];
+
+    const dCard = document.createElement('div');
+    dCard.className = "card" + (l.status==="gone"?" expired":"");
+    dCard.innerHTML = `
+      <div class="card-main">
+        <h3>${l.food}</h3>
+        <div class="card-meta">
+          <span class="pill">${l.servings} servings</span>
+          <span class="pill">${l.source}</span>
+          <span class="pill">📍 ${l.loc}</span>
+          <span class="timer ${left<45*60000 && left>0?'warn':''}">${fmtTime(left)}</span>
+        </div>
+      </div>
+      <div class="card-side"><span class="status ${statusClass}">${statusLabel}</span></div>`;
+    donorList.appendChild(dCard);
+
+    if(l.status==="open"){
+      anyClaim = true;
+      const matched = capacity>0 && l.servings>=capacity;
+      const cCard = document.createElement('div');
+      cCard.className = "card" + (matched?" matched":"");
+      cCard.innerHTML = `
+        <div class="card-main">
+          <h3>${l.food}</h3>
+          <div class="card-meta">
+            <span class="pill ${matched?'match':''}">${l.servings} servings</span>
+            <span class="pill">${l.source}</span>
+            <span class="pill">📍 ${l.loc}</span>
+            <span class="timer ${left<45*60000?'warn':''}">${fmtTime(left)}</span>
+          </div>
+        </div>
+        <div class="card-side"><button class="btn small" data-claim="${l.id}">Claim</button></div>`;
+      claimList.appendChild(cCard);
+    }
+
+    if(l.status==="claimed"){
+      anyTransit = true;
+      const tCard = document.createElement('div');
+      tCard.className = "card";
+      tCard.innerHTML = `
+        <div class="card-main">
+          <h3>${l.food}</h3>
+          <div class="card-meta"><span class="pill">${l.servings} servings</span><span class="tag">🔋 e-bike</span></div>
+          <div class="dropoff-row">
+            <input type="text" placeholder="Proof link (Instagram/YouTube)" data-proof-input="${l.id}">
+            <button class="btn small" data-dropoff="${l.id}">Confirm drop-off</button>
+          </div>
+        </div>`;
+      transitList.appendChild(tCard);
+    }
+  });
+
+  if(!anyDonor) donorList.innerHTML = '<div class="empty">No listings yet — post one above.</div>';
+  if(!anyClaim) claimList.innerHTML = '<div class="empty">No open listings match right now.</div>';
+  if(!anyTransit) transitList.innerHTML = '<div class="empty">Nothing out for delivery right now.</div>';
+
+  claimList.querySelectorAll('[data-claim]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const l = listings.find(x=>x.id===parseInt(btn.dataset.claim));
+      l.status = "claimed";
+      const code = Math.floor(1000+Math.random()*9000);
+      document.getElementById('otp-code').textContent = code;
+      document.getElementById('otp-backdrop').classList.add('show');
+      render();
+    });
+  });
+  transitList.querySelectorAll('[data-dropoff]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = parseInt(btn.dataset.dropoff);
+      const input = transitList.querySelector(`[data-proof-input="${id}"]`);
+      const proof = input.value.trim();
+      if(!proof) return;
+      const l = listings.find(x=>x.id===id);
+      l.status = "delivered";
+      l.proof = proof;
+      feedPosts.unshift({id:nextFeedId++, name:"Driver update", org:"Second Plate", caption:`Delivered ${l.servings} servings of ${l.food}`, link:proof});
+      render();
+    });
+  });
+
+  // fund/kit list
+  const fundList = document.getElementById('fund-list');
+  fundList.innerHTML = "";
+  if(fundDonations.length===0){
+    fundList.innerHTML = '<div class="empty">No contributions yet.</div>';
+  } else {
+    fundDonations.slice().reverse().forEach(f=>{
+      const card = document.createElement('div');
+      card.className = "card";
+      card.innerHTML = `<div class="card-main"><h3>${f.label}</h3></div><div class="card-side"><span class="status claimed">Received</span></div>`;
+      fundList.appendChild(card);
+    });
+  }
+
+  // feed list
+  const feedList = document.getElementById('feed-list');
+  feedList.innerHTML = "";
+  feedPosts.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = "card feed-card";
+    card.innerHTML = `
+      <div class="feed-photo">📸</div>
+      <div class="feed-body">
+        <h3>${p.name} · ${p.org}</h3>
+        <p>${p.caption}</p>
+        <a href="${p.link}" target="_blank" rel="noopener">Watch proof ↗</a>
+      </div>`;
+    feedList.appendChild(card);
+  });
+
+  // orders / activity list
+  const ordersList = document.getElementById('orders-list');
+  ordersList.innerHTML = "";
+  let activity = [];
+  listings.forEach(l=>{
+    const label = {open:"Posted listing", claimed:"In transit", delivered:"Delivered", gone:"Expired"}[l.status];
+    activity.push({title:l.food, meta:`${l.servings} servings · ${l.source}`, tag:label});
+  });
+  fundDonations.forEach(f=> activity.push({title:f.label, meta:"Contribution", tag:"Received"}));
+  if(activity.length===0){
+    ordersList.innerHTML = '<div class="empty">No activity yet.</div>';
+  } else {
+    activity.forEach(a=>{
+      const card = document.createElement('div');
+      card.className = "card";
+      card.innerHTML = `<div class="card-main"><h3>${a.title}</h3><div class="card-meta">${a.meta}</div></div><div class="card-side"><span class="status open">${a.tag}</span></div>`;
+      ordersList.appendChild(card);
+    });
+  }
+}
+
+document.getElementById('d-submit').addEventListener('click', ()=>{
+  const food = document.getElementById('d-food').value.trim();
+  const servings = parseInt(document.getElementById('d-servings').value);
+  const source = document.getElementById('d-source').value.trim() || "Unnamed provider";
+  const loc = document.getElementById('d-loc').value.trim() || "Location not specified";
+  const shelf = parseInt(document.getElementById('d-shelf').value);
+  if(!food || !servings) return;
+  listings.unshift({id:nextId++, food, servings, source, loc, shelf, posted:Date.now(), status:"open"});
+  document.getElementById('d-food').value = "";
+  document.getElementById('d-servings').value = "";
+  document.getElementById('d-source').value = "";
+  document.getElementById('d-loc').value = "";
+  render();
+});
+
+document.getElementById('c-capacity').addEventListener('input', render);
+
+document.getElementById('f-submit').addEventListener('click', ()=>{
+  const caption = document.getElementById('f-caption').value.trim();
+  const link = document.getElementById('f-link').value.trim();
+  if(!caption || !link) return;
+  feedPosts.unshift({id:nextFeedId++, name:currentUser.name || "Registered employee", org:"Verified update", caption, link});
+  document.getElementById('f-caption').value = "";
+  document.getElementById('f-link').value = "";
+  render();
+});
+
+let fundAmount = 500, fundLabel = "₹500 donation";
+function setImpact(){
+  const meals = Math.max(1, Math.round(fundAmount/50));
+  document.getElementById('fund-impact').innerHTML = `<strong>₹${fundAmount}</strong> covers roughly ${meals} meals of delivery.`;
+  document.getElementById('fund-btn-amt').textContent = fundAmount;
+}
+document.querySelectorAll('.amt').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.amt').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.kit').forEach(k=>k.classList.remove('active'));
+    btn.classList.add('active');
+    const wrap = document.getElementById('fund-custom-wrap');
+    if(btn.dataset.amt==="0"){
+      wrap.style.display = "block";
+      fundAmount = parseInt(document.getElementById('fund-custom').value) || 0;
+    } else {
+      wrap.style.display = "none";
+      fundAmount = parseInt(btn.dataset.amt);
+    }
+    fundLabel = "₹"+fundAmount+" donation";
+    setImpact();
+  });
+});
+document.getElementById('fund-custom').addEventListener('input', (e)=>{
+  fundAmount = parseInt(e.target.value) || 0;
+  fundLabel = "₹"+fundAmount+" donation";
+  setImpact();
+});
+document.querySelectorAll('.kit').forEach(kit=>{
+  kit.addEventListener('click', ()=>{
+    document.querySelectorAll('.kit').forEach(k=>k.classList.remove('active'));
+    document.querySelectorAll('.amt').forEach(b=>b.classList.remove('active'));
+    kit.classList.add('active');
+    document.getElementById('fund-custom-wrap').style.display = "none";
+    fundAmount = parseInt(kit.dataset.price);
+    fundLabel = kit.dataset.kit + " (₹" + fundAmount + ")";
+    setImpact();
+  });
+});
+document.getElementById('fund-submit').addEventListener('click', ()=>{
+  if(!fundAmount || fundAmount<=0) return;
+  fundDonations.push({label: fundLabel});
+  document.getElementById('fund-amount-display').textContent = "₹"+fundAmount;
+  document.getElementById('fund-backdrop').classList.add('show');
+  render();
+});
+document.getElementById('fund-close').addEventListener('click', ()=>{
+  document.getElementById('fund-backdrop').classList.remove('show');
+});
+document.getElementById('otp-close').addEventListener('click', ()=>{
+  document.getElementById('otp-backdrop').classList.remove('show');
+});
+
+document.getElementById('p-save').addEventListener('click', ()=>{
+  currentUser.name = document.getElementById('p-name').value.trim();
+  currentUser.loc = document.getElementById('p-loc').value.trim();
+  currentUser.email = document.getElementById('p-email').value.trim();
+  document.getElementById('who-name').textContent = currentUser.name;
+  document.getElementById('who-loc').textContent = currentUser.loc;
+  document.getElementById('who-initial').textContent = (currentUser.name[0]||"?").toUpperCase();
+  document.getElementById('side-user').textContent = currentUser.name + " · " + currentUser.loc;
+});
+
+document.getElementById('help-contact').addEventListener('click', ()=>{
+  window.location.href = "mailto:support@secondplate.org";
+});
+
+function switchTab(view){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.view===view));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active', v.id==='view-'+view));
+  closeSidebar();
+}
+document.querySelectorAll('.tab[data-view]').forEach(tab=>{
+  tab.addEventListener('click', ()=> switchTab(tab.dataset.view));
+});
+
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-backdrop').classList.add('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-backdrop').classList.remove('show');
+}
+document.getElementById('logo-btn').addEventListener('click', openSidebar);
+document.getElementById('sidebar-close').addEventListener('click', closeSidebar);
+document.getElementById('sidebar-backdrop').addEventListener('click', closeSidebar);
+
+let selectedRole = "individual";
+document.querySelectorAll('.role-opt').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('.role-opt').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active');
+    selectedRole = opt.dataset.role;
+  });
+});
+
+const roleTabs = {
+  individual: ["feed","donate","claim","fund","profile","orders","help"],
+  ngo: ["feed","donate","claim","profile","orders","help"]
+};
+
+document.getElementById('a-submit').addEventListener('click', ()=>{
+  const name = document.getElementById('a-name').value.trim();
+  const loc = document.getElementById('a-loc').value.trim();
+  const email = document.getElementById('a-email').value.trim();
+  const pass = document.getElementById('a-pass').value.trim();
+  const err = document.getElementById('a-err');
+  if(!name || !email || !pass){ err.classList.add('show'); return; }
+  err.classList.remove('show');
+
+  currentUser = {name, loc, email, role:selectedRole};
+  document.getElementById('who-initial').textContent = name[0].toUpperCase();
+  document.getElementById('who-name').textContent = name;
+  document.getElementById('who-loc').textContent = loc || "Location not set";
+  document.getElementById('side-user').textContent = name + (loc? " · "+loc : "");
+  document.getElementById('p-name').value = name;
+  document.getElementById('p-loc').value = loc;
+  document.getElementById('p-email').value = email;
+  document.getElementById('p-role').value = selectedRole==="ngo" ? "Organization / NGO" : "Individual";
+
+  document.getElementById('auth-screen').style.display = "none";
+  document.getElementById('app-screen').style.display = "block";
+
+  const allowed = roleTabs[selectedRole];
+  document.querySelectorAll('.tab[data-view]').forEach(t=> t.style.display = allowed.includes(t.dataset.view) ? "" : "none");
+  document.getElementById('feed-post-panel').style.display = selectedRole==="ngo" ? "block" : "none";
+  switchTab("feed");
+  render();
+});
+
+document.getElementById('sidebar-logout').addEventListener('click', ()=>{
+  document.getElementById('app-screen').style.display = "none";
+  document.getElementById('auth-screen').style.display = "block";
+  closeSidebar();
+  document.getElementById('a-name').value = "";
+  document.getElementById('a-loc').value = "";
+  document.getElementById('a-email').value = "";
+  document.getElementById('a-pass').value = "";
+});
+
+setImpact();
+setInterval(render, 30000);
+render();
+</script>
+</body>
+</html>
